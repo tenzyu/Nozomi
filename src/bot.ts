@@ -5,7 +5,10 @@ import * as constant from './constant';
 import * as language from './language';
 
 export class MyBot {
-  public client = new Client({ intents: 32767 });
+  public client = new Client({
+    intents: 32767,
+    partials: ['MESSAGE', 'REACTION', 'USER']
+  });
 
   public loadCogs = async () => {
     const cogs = await readdir(join('src', 'cogs'));
