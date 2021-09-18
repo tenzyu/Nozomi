@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  nozomi:
+    container_name: nozomi
+    image: node
+    volumes:
+      - /home/deploy/nozomi:/code
+    working_dir: /code
+    command: npm start
+    restart: always
