@@ -23,19 +23,18 @@ const unsetTask = async (message: Message) => {
 client.on('messageReactionAdd', async (reaction, user) => {
   const fixedReaction = reaction.partial ? await reaction.fetch() : reaction;
   const fixedUser = user.partial ? await user.fetch() : user;
+  const fixedMessage = fixedReaction.message.partial
+    ? await fixedReaction.message.fetch()
+    : fixedReaction.message;
   const emoji = fixedReaction.emoji.toString();
 
   if (
-    fixedReaction.message.channel.id !== constant.channelTaskManager ||
-    fixedReaction.message.author?.id !== fixedUser.id ||
+    fixedMessage.channel.id !== constant.channelTaskManager ||
+    fixedMessage.author.id !== fixedUser.id ||
     ![EMOJI_SET_TASK, EMOJI_UNSET_TASK].includes(emoji)
   ) {
     return;
   }
-
-  const fixedMessage = fixedReaction.message.partial
-    ? await fixedReaction.message.fetch()
-    : fixedReaction.message;
 
   if (emoji === EMOJI_SET_TASK) {
     await setTask(fixedMessage);
