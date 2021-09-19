@@ -1,6 +1,6 @@
 import { client } from '../index';
 import { mainGuildId, channelAssignList } from '../constant';
-import { Collection, Message, Role, TextChannel } from 'discord.js';
+import { Collection, Message, MessageEmbed, Role, TextChannel } from 'discord.js';
 import { getTextChannelById } from '../lib/discordBotUtils';
 
 const embedName = 'Assign List';
@@ -12,23 +12,24 @@ const newAssignList = (roles: Collection<string, Role>): string => {
   return assignList;
 };
 
-const createAssignListEmbed = (assignList: string) => {
-  const assignListEmbed = {
+const createAssignListEmbed = (assignList: string): MessageEmbed => {
+  const embed = new MessageEmbed({
     color: 0xff4596,
     title: embedName,
     description: assignList,
     author: {
       name: '希'
     },
-    thumbnail: {
-      url: client.user?.avatarURL
-    },
     timestamp: new Date(),
     footer: {
       text: 'きゃ～'
     }
-  };
-  return assignListEmbed;
+  })
+  const url = client.user?.avatarURL()
+  if (url !== null && url !== undefined){
+    embed.setThumbnail(url)
+  }
+  return embed;
 };
 
 const findAssignListMessage = (channel?: TextChannel): Message | null => {
