@@ -45,6 +45,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
 
 const schedule = new RecurrenceRule();
 schedule.hour = 9; // it means 18:00 in JST
+schedule.minute = 0;
 
 scheduleJob(schedule, async () => {
   const channel = getTextChannelById(constant.channelTaskManager);
