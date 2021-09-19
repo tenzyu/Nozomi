@@ -48,7 +48,7 @@ const findAssignListMessage = (channel?: TextChannel): Message | null => {
   return null;
 };
 
-const updateAssignListEmbed = async (embed: any, message: Message | null) => {
+const updateAssignListEmbed = async (embed: MessageEmbed, message: Message | null) => {
   if (message === null) {
     await getTextChannelById(channelAssignList)?.send({ embeds: [embed] });
     return;
