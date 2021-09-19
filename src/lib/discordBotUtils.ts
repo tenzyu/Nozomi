@@ -1,5 +1,5 @@
 import { TextChannel } from 'discord.js';
-import { client } from './index';
+import { client } from '../index';
 
 export const isTextChannel = (channel: unknown): channel is TextChannel => {
   return channel instanceof TextChannel;

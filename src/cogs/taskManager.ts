@@ -1,7 +1,7 @@
 import { RecurrenceRule, scheduleJob } from 'node-schedule';
 import { client } from '../index';
 import * as constant from '../constant';
-import { getTextChannelById } from '../utils';
+import { getTextChannelById } from '../lib/discordBotUtils';
 import { Message } from 'discord.js';
 
 const EMOJI_SET_TASK = '\uD83D\uDCCC'; // Pushpin

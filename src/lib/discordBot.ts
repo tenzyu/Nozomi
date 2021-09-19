@@ -1,10 +1,11 @@
 import { Client } from 'discord.js';
 import { readdir } from 'fs/promises';
 import { join, parse } from 'path';
-import * as constant from './constant';
-import * as language from './language';
+import * as constant from '../constant';
+import * as language from '../language';
 
 export class MyBot {
+  // これコンストラクタに引数渡す感じにすると良さそう
   public client = new Client({
     intents: 32767,
     partials: ['MESSAGE', 'REACTION', 'USER']
@@ -14,7 +15,7 @@ export class MyBot {
     const cogs = await readdir(join('src', 'cogs'));
     for (const cog of cogs) {
       const cogName = parse(cog).name;
-      await import(`./cogs/${cogName}`);
+      await import(`../cogs/${cogName}`);
       console.log(language.loadedCog(cogName));
     }
   };
