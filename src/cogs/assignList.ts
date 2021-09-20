@@ -7,6 +7,7 @@ const embedName = 'Assign List';
 
 const newAssignList = (roles: Collection<string, Role>): string => {
   const assignList = roles
+    .filter((role) => role.name.endsWith("班") || role.name === "進捗警察")
     .map((role) => `${role.toString()}\n${role.members.map(String).join('\n')}`)
     .join('\n\n');
   return assignList;
@@ -26,7 +27,7 @@ const createAssignListEmbed = (assignList: string): MessageEmbed => {
     }
   })
   const url = client.user?.avatarURL()
-  if (url !== null && url !== undefined){
+  if (typeof url === "string"){
     embed.setThumbnail(url)
   }
   return embed;
