@@ -33,20 +33,12 @@ const createAssignListEmbed = (assignList: string): MessageEmbed => {
   return embed;
 };
 
-const findAssignListMessage = (channel?: TextChannel): Message | null => {
-  const message = channel?.lastMessage;
-  if (message === undefined || message === null) {
-    return null;
-  }
-
-  if (message.author == client.user && message.embeds) {
-    for (const embed of message.embeds) {
-      if (embed.title === embedName) {
-        return message;
-      }
-    }
-  }
-  return null;
+const findAssignListMessage = async (channel?: TextChannel): Promise<Message | null> => {
+  const messages = await channel?.messages.fetch();
+  return messages?.find((message) =>
+      message.author === client.user
+      && message.embeds.some((embed)=> embed.title === embedName)
+  ) ?? null;
 };
 
 const updateAssignListEmbed = async (embed: MessageEmbed, message: Message | null) => {
@@ -65,7 +57,7 @@ const sendAssignListEmbed = async () => {
   }
   const assignList = newAssignList(roles);
   const embed = createAssignListEmbed(assignList);
-  const message = findAssignListMessage(getTextChannelById(channelAssignList));
+  const message = await findAssignListMessage(getTextChannelById(channelAssignList));
   await updateAssignListEmbed(embed, message);
 };
 
