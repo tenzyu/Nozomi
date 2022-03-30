@@ -20,6 +20,15 @@ const unsetTask = async (message: Message) => {
   await message.reactions.removeAll();
 };
 
+client.on('messageCreate', async (message: Message) => {
+  if (message.channelId !== constant.channelTaskManager || message.author.bot) {
+    return;
+  }
+  if (message.content.startsWith('。')) {
+    await setTask(message);
+  }
+});
+
 client.on('messageReactionAdd', async (reaction, user) => {
   const fixedReaction = reaction.partial ? await reaction.fetch() : reaction;
   const fixedUser = user.partial ? await user.fetch() : user;
@@ -36,7 +45,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
     return;
   }
 
-  if (emoji === EMOJI_SET_TASK || fixedMessage.content.startsWith('。')) {
+  if (emoji === EMOJI_SET_TASK) {
     await setTask(fixedMessage);
   } else if (emoji === EMOJI_UNSET_TASK) {
     await unsetTask(fixedMessage);
