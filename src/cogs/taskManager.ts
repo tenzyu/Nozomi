@@ -36,7 +36,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
     return;
   }
 
-  if (emoji === EMOJI_SET_TASK) {
+  if (emoji === EMOJI_SET_TASK || fixedMessage.content.startsWith('。')) {
     await setTask(fixedMessage);
   } else if (emoji === EMOJI_UNSET_TASK) {
     await unsetTask(fixedMessage);
