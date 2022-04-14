@@ -1,9 +1,8 @@
-import { MyBot } from './lib/discordBot';
+import { MyBot } from './lib/discordBot'
 
-const nozomi = new MyBot();
-export const client = nozomi.client;
-
-(async () => {
-  await nozomi.loadCogs();
-  await nozomi.login();
-})();
+const nozomi = new MyBot()
+export const client = nozomi.client
+;(async () => {
+  await nozomi.loadCogs()
+  await nozomi.login()
+})()
