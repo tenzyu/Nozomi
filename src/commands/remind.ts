@@ -58,15 +58,16 @@ export default {
 
     const jstTime = getJstTime()
 
-    const fixedMonth = opts.getNumber('month')
-      ? opts.getNumber('month')! - 1
-      : jstTime.getMonth()
+    const fixedMonth =
+      typeof opts.getNumber('month') === 'number'
+        ? opts.getNumber('month')! - 1
+        : jstTime.getMonth()
 
-    jstTime.setFullYear(opts.getNumber('years') || jstTime.getFullYear())
+    jstTime.setFullYear(opts.getNumber('years') ?? jstTime.getFullYear())
     jstTime.setMonth(fixedMonth)
-    jstTime.setDate(opts.getNumber('date') || jstTime.getDate())
-    jstTime.setHours(opts.getNumber('hours') || jstTime.getHours())
-    jstTime.setMinutes(opts.getNumber('minutes') || jstTime.getMinutes())
+    jstTime.setDate(opts.getNumber('date') ?? jstTime.getDate())
+    jstTime.setHours(opts.getNumber('hours') ?? jstTime.getHours())
+    jstTime.setMinutes(opts.getNumber('minutes') ?? jstTime.getMinutes())
 
     const jstSnowflake = toSnowflake(jstTime)
     Schedule.add(jstSnowflake, schedule)
