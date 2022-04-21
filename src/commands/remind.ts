@@ -1,6 +1,6 @@
 import { CommandInteraction, GuildChannel } from 'discord.js'
 import { Schedule } from '../base/schedule'
-import { getJstTime } from '../utils'
+import { getJstTime, toSnowflake } from '../utils'
 
 export default {
   data: {
@@ -22,7 +22,7 @@ export default {
       {
         name: 'hours',
         type: 'NUMBER',
-        description: '(任意)時間を指定してください。'
+        description: '(任意)時を指定してください。'
       },
       {
         name: 'date',
@@ -32,12 +32,12 @@ export default {
       {
         name: 'month',
         type: 'NUMBER',
-        description: '(任意)月を入力してください。'
+        description: '(任意)月を指定してください。'
       },
       {
         name: 'years',
         type: 'NUMBER',
-        description: '(任意)年を入力してください。'
+        description: '(任意)年を指定してください。'
       }
     ]
   },
@@ -68,10 +68,14 @@ export default {
     jstTime.setHours(opts.getNumber('hours') || jstTime.getHours())
     jstTime.setMinutes(opts.getNumber('minutes') || jstTime.getMinutes())
 
-    Schedule.add(jstTime.toString(), schedule)
+    const jstSnowflake = toSnowflake(jstTime)
+    Schedule.add(jstSnowflake, schedule)
+    Schedule.save()
+
+    const timestamp = jstTime.toLocaleString('ja-JP')
 
     await interaction.reply({
-      content: `${jstTime} に\n${message} でリマインダーをセットしました。`
+      content: `${timestamp} に\n${message} でリマインダーをセットしました。`
     })
   }
 }

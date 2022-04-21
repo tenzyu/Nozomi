@@ -2,7 +2,7 @@ import { RecurrenceRule, scheduleJob } from 'node-schedule'
 import { getTextChannel } from '../lib/discordBotUtils'
 import { Schedule } from '../base/schedule'
 import { client } from '..'
-import { getJstTime } from '../utils'
+import { getJstTime, toSnowflake } from '../utils'
 
 client.on('ready', () => {
   Schedule.load()
@@ -12,16 +12,18 @@ const _schedule = new RecurrenceRule()
 _schedule.second = 0
 
 scheduleJob(_schedule, async () => {
-  const nowTime = getJstTime().toString()
+  const nowSnowflake = toSnowflake(getJstTime())
 
-  for (const [date, { authorId, channelId, message }] of Object.entries(
-    Schedule.data
-  )) {
-    if (date < nowTime) {
+  for (const [
+    remindSnowflake,
+    { authorId, channelId, message }
+  ] of Object.entries(Schedule.data)) {
+    if (remindSnowflake < nowSnowflake) {
       const channel = await getTextChannel(channelId)
 
       channel.send(`<@${authorId}> ${message}`)
-      Schedule.remove(date)
+      Schedule.remove(remindSnowflake)
+      Schedule.save()
     }
   }
 })
