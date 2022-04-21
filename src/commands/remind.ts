@@ -15,14 +15,9 @@ export default {
         required: true
       },
       {
-        name: 'minutes',
+        name: 'month',
         type: 'NUMBER',
-        description: '(任意)分を指定してください。'
-      },
-      {
-        name: 'hours',
-        type: 'NUMBER',
-        description: '(任意)時を指定してください。'
+        description: '(任意)月を指定してください。'
       },
       {
         name: 'date',
@@ -30,9 +25,14 @@ export default {
         description: '(任意)日を指定してください。'
       },
       {
-        name: 'month',
+        name: 'hours',
         type: 'NUMBER',
-        description: '(任意)月を指定してください。'
+        description: '(任意)時を指定してください。'
+      },
+      {
+        name: 'minutes',
+        type: 'NUMBER',
+        description: '(任意)分を指定してください。'
       },
       {
         name: 'years',

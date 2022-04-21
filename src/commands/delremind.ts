@@ -27,7 +27,7 @@ export default {
     let menu = '削除するリマインダーを選択してください。\n\n'
 
     for (let i = 0; i < remindDate.length; i++) {
-      menu += `\`${i}: ${remindDate[i][1].message}\n\``
+      menu += `\`${i}: ${remindDate[i][1].message}\`\n`
 
       buttons.push(
         new MessageButton()
