@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/tenzyu/Nozomi#readme",
   "devDependencies": {
-    "@types/node": "^16.6.1",
+    "@types/node": "^17.0.26",
     "@types/node-schedule": "^1.3.2",
     "prettier": "^2.6.2",
     "ts-node": "^10.7.0",
@@ -32,6 +32,8 @@
   "dependencies": {
     "discord.js": "^13.6.0",
     "dotenv": "^16.0.0",
+    "fast-average-color-node": "^2.2.0",
+    "node-fetch": "^2.6.7",
     "node-schedule": "^2.1.0",
     "outdent": "^0.8.0"
   }
