@@ -1,13 +1,8 @@
-import { client } from '../index'
+import { client } from '..'
 import { getTextChannelById } from '../lib/discordBotUtils'
 import * as constant from '../constant'
-import { TextChannel } from 'discord.js'
 
-let channelReminder: TextChannel | undefined
-client.on('ready', () => {
-  // init
-  channelReminder = getTextChannelById('920072102537732136')
-
+client.on('ready', async () => {
   const channel = getTextChannelById(constant.channelLogBotActivity)
-  channel?.send('Logged in')
+  await channel?.send('Logged in')
 })
