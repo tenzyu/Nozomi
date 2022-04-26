@@ -3,8 +3,8 @@ import { Message } from 'discord.js'
 import { client } from '..'
 import { RecurrenceRule, scheduleJob } from 'node-schedule'
 import {
-  getCategoryChannel,
-  getLastMessageOrNull,
+  fetchCategoryChannel,
+  fetchLastMessageOrNull,
   isCategoryChannel,
   isTextChannel
 } from '../lib/discordBotUtils'
@@ -23,12 +23,12 @@ const schedule = new RecurrenceRule()
 schedule.second = 0
 
 scheduleJob(schedule, async () => {
-  const active = await getCategoryChannel(constant.categoryActive)
-  const inactive = await getCategoryChannel(constant.categoryInactive)
+  const active = await fetchCategoryChannel(constant.categoryActive)
+  const inactive = await fetchCategoryChannel(constant.categoryInactive)
   const channels = active.children.filter(isTextChannel).toJSON()
 
   for (const channel of channels) {
-    const lastMessage = await getLastMessageOrNull(channel)
+    const lastMessage = await fetchLastMessageOrNull(channel)
     if (lastMessage === null) continue
 
     const now = new Date()

@@ -15,7 +15,7 @@ export const getTextChannelById = (id: string) => {
   }
 }
 
-export const getTextChannel = async (id: string) => {
+export const fetchTextChannel = async (id: string) => {
   const channel = await client.channels.fetch(id)
 
   if (isTextChannel(channel)) {
@@ -31,7 +31,7 @@ export const isCategoryChannel = (
   return channel instanceof CategoryChannel
 }
 
-export const getCategoryChannel = async (id: string) => {
+export const fetchCategoryChannel = async (id: string) => {
   const channel = await client.channels.fetch(id)
 
   if (isCategoryChannel(channel)) {
@@ -41,7 +41,7 @@ export const getCategoryChannel = async (id: string) => {
   }
 }
 
-export const getLastMessageOrNull = async (channel: TextChannel) => {
+export const fetchLastMessageOrNull = async (channel: TextChannel) => {
   const messages = await channel.messages.fetch({ limit: 1 }).catch(() => null)
   if (messages === null) return null
 

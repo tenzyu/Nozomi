@@ -3,7 +3,7 @@ import { RecurrenceRule, scheduleJob } from 'node-schedule'
 import { client } from '..'
 import { Revise } from '../base/revise'
 import { channelRevise, daySnowflake } from '../constant'
-import { getTextChannel } from '../lib/discordBotUtils'
+import { fetchTextChannel } from '../lib/discordBotUtils'
 import { getJstTime, toSnowflake } from '../utils'
 
 client.on('ready', () => {
@@ -49,7 +49,7 @@ scheduleJob(_schedule, async () => {
     { authorId, channelId, messageId, interval, snowflake }
   ] of Object.entries(Revise.data)) {
     if (snowflake < nowSnowflake) {
-      const quotedChannel = await getTextChannel(channelId)
+      const quotedChannel = await fetchTextChannel(channelId)
       const quotedMessage = await quotedChannel.messages.fetch(messageId)
       if (!quotedMessage) {
         console.log(`[revise] ${id} message not found`)
@@ -62,7 +62,7 @@ scheduleJob(_schedule, async () => {
         .setTitle(`${interval}回目の復習`)
         .setDescription(description)
         .setTimestamp(quotedMessage.createdAt)
-      const channel = await getTextChannel(channelRevise)
+      const channel = await fetchTextChannel(channelRevise)
 
       channel.send({
         content: `<@${authorId}>`,
