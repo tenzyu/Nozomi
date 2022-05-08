@@ -4,7 +4,7 @@ import {
   Message,
   MessageEmbed
 } from 'discord.js'
-import { avatar2color } from '../utils'
+import { colorFromAvatar } from '../utils'
 
 export default {
   data: {
@@ -50,7 +50,7 @@ export default {
       })
     }
 
-    const color = await avatar2color(<GuildMember>interaction.member)
+    const color = await colorFromAvatar(<GuildMember>interaction.member)
     const embed = new MessageEmbed()
       .setTitle(interaction.options.getString('title', true))
       .setDescription(choices.join('\n'))

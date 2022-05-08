@@ -2,17 +2,21 @@ import { AnyChannel, CategoryChannel, TextChannel } from 'discord.js'
 import { client } from '../index'
 
 export const isTextChannel = (
-  channel: AnyChannel | null
+  channel: AnyChannel | null | undefined
 ): channel is TextChannel => {
   return channel instanceof TextChannel
 }
 
-// TODO:
-export const getTextChannelById = (id: string) => {
+export const isCategoryChannel = (
+  channel: AnyChannel | null | undefined
+): channel is CategoryChannel => {
+  return channel instanceof CategoryChannel
+}
+
+export const getTextChannelOrNull = (id: string): TextChannel | null => {
   const channel = client.channels.resolve(id)
-  if (isTextChannel(channel)) {
-    return channel
-  }
+
+  return isTextChannel(channel) ? channel : null
 }
 
 export const fetchTextChannel = async (id: string) => {
@@ -23,12 +27,6 @@ export const fetchTextChannel = async (id: string) => {
   } else {
     throw new Error('TextChannel does not exist')
   }
-}
-
-export const isCategoryChannel = (
-  channel: AnyChannel | null
-): channel is CategoryChannel => {
-  return channel instanceof CategoryChannel
 }
 
 export const fetchCategoryChannel = async (id: string) => {

@@ -1,44 +1,48 @@
-import { Client, ClientOptions, CommandInteraction } from 'discord.js'
+import { Client, CommandInteraction } from 'discord.js'
 import { readdir } from 'fs/promises'
 import { join, parse } from 'path'
 import { Command } from '../base/command'
 
 export class MyBot extends Client {
   readonly commands: Command[] = []
-
-  constructor(options: ClientOptions) {
-    super(options)
-  }
+  // must be an absolute path
+  readonly pathToCogs = join('src', 'cogs')
+  readonly pathToCommands = join('src', 'commands')
 
   public loadCogs = async () => {
-    const cogs = await readdir(join('src', 'cogs'))
+    const cogs = await readdir(this.pathToCogs)
 
-    for (const cog of cogs) {
-      const cogName = parse(cog).name
+    cogs.map(parse).forEach(async ({ name }) => {
+      // must be a relative path
+      const path = join('..', 'cogs', name)
 
-      await import(`../cogs/${cogName}`)
-      console.log(`loaded ${cogName} cog`)
-    }
+      await import(path)
+        .then((_) => console.log(`loaded ${name} cog`))
+        .catch((error) => console.log(`failed to load ${name} cog\n${error}`))
+    })
   }
 
   async loadCommand(guildId: string): Promise<void> {
-    const commandFiles = await readdir(join('src', 'commands'))
+    const commandFiles = await readdir(this.pathToCommands)
 
-    commandFiles.map(async (file) => {
-      const commandName = parse(file).name
-      const command: Command = (await import(`../commands/${commandName}`))
-        .default
+    commandFiles.map(parse).forEach(async ({ name }) => {
+      const path = join('..', 'commands', name)
+      const { data, execute }: Command = (await import(path)).default
 
-      this.commands.push(new Command(command.data, command.execute))
+      this.commands.push(new Command(data, execute))
     })
 
     this.once('ready', async () => {
-      const data = this.commands.map((command) => command.data)
+      const dataArray = this.commands.map((command) => command.data)
 
-      await this.application?.commands.set(data, guildId)
-      this.application?.commands.cache.forEach((command) =>
-        console.log(`loaded ${command.name} command`)
-      )
+      dataArray.forEach(async (data) => {
+        await this.application?.commands
+          .create(data, guildId)
+          .then((_) => console.log(`created command ${data.name}`))
+          .catch((error) =>
+            console.log(`failed to create command ${data.name}\n${error}`)
+          )
+      })
     })
 
     this.on('interactionCreate', async (interaction) => {

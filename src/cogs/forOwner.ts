@@ -1,8 +1,8 @@
 import { client } from '..'
-import { getTextChannelById } from '../lib/discordBotUtils'
+import { getTextChannelOrNull } from '../lib/discordBotUtils'
 import * as constant from '../constant'
 
 client.on('ready', async () => {
-  const channel = getTextChannelById(constant.channelLogBotActivity)
+  const channel = getTextChannelOrNull(constant.channelLogBotActivity)
   await channel?.send('Logged in')
 })

@@ -7,7 +7,7 @@ import {
   Role,
   TextChannel
 } from 'discord.js'
-import { getTextChannelById } from '../lib/discordBotUtils'
+import { fetchTextChannel, getTextChannelOrNull } from '../lib/discordBotUtils'
 
 const embedName = 'Assign List'
 
@@ -57,7 +57,7 @@ const updateAssignListEmbed = async (
   message: Message | null
 ) => {
   if (message === null) {
-    await getTextChannelById(channelAssignList)?.send({ embeds: [embed] })
+    await getTextChannelOrNull(channelAssignList)?.send({ embeds: [embed] })
     return
   }
   await message.edit({ embeds: [embed] })
@@ -72,7 +72,7 @@ const sendAssignListEmbed = async () => {
   const assignList = newAssignList(roles)
   const embed = createAssignListEmbed(assignList)
   const message = await findAssignListMessage(
-    getTextChannelById(channelAssignList)
+    await fetchTextChannel(channelAssignList)
   )
   await updateAssignListEmbed(embed, message)
 }

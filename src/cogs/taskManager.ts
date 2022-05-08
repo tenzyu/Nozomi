@@ -1,7 +1,7 @@
 import { RecurrenceRule, scheduleJob } from 'node-schedule'
 import { client } from '../index'
 import * as constant from '../constant'
-import { getTextChannelById } from '../lib/discordBotUtils'
+import { getTextChannelOrNull } from '../lib/discordBotUtils'
 import { Message } from 'discord.js'
 
 const EMOJI_SET_TASK = '\uD83D\uDCCC' // Pushpin
@@ -57,7 +57,7 @@ schedule.hour = 9 // it means 18:00 in JST
 schedule.minute = 0
 
 scheduleJob(schedule, async () => {
-  const channel = getTextChannelById(constant.channelTaskManager)
+  const channel = getTextChannelOrNull(constant.channelTaskManager)
   const tasks = await channel?.messages.fetchPinned()
   if (!tasks || tasks.size === 0) return
 

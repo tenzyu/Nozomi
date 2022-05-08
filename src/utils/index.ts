@@ -1,2 +1,2 @@
-export * from './date'
-export * from './avator2color'
+export * from './time'
+export * from './color'
