@@ -8,9 +8,14 @@ import { fetchTextChannel } from '../lib/discordUtils'
 const embedName = 'Assign List'
 
 const createAssignList = (roles: Collection<string, Role>): string => {
-  const targetRoles = roles.filter(
-    ({ managed, name }) => !(managed || name.includes('everyone'))
-  )
+  const ignoreRoleIds = [
+    '921807626122190899',
+    '927501472046940190',
+    '950635933772947497'
+  ]
+  const targetRoles = roles
+    .filter(({ managed, id }) => !(managed || ignoreRoleIds.includes(id)))
+    .sort((a, b) => a.name.localeCompare(b.name, 'ja-JP'))
   const membersList = targetRoles.map(
     (role) => `${role}\n${role.members.map(String).join('\n')}`
   )
