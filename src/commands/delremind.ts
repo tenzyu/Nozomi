@@ -1,7 +1,7 @@
 import { CommandInteraction, MessageActionRow, MessageButton } from 'discord.js'
 
 import { client } from '..'
-import { ISchedule, Schedule } from '../base/schedule'
+import { type ISchedule, Schedule } from '../entities/schedule'
 
 export default {
   data: {

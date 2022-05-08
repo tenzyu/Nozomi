@@ -4,7 +4,8 @@ import {
   Message,
   MessageEmbed
 } from 'discord.js'
-import { colorFromAvatar } from '../utils'
+
+import { fetchHexColorFromAvatar } from '../lib/discordUtils'
 
 export default {
   data: {
@@ -50,7 +51,7 @@ export default {
       })
     }
 
-    const color = await colorFromAvatar(<GuildMember>interaction.member)
+    const color = await fetchHexColorFromAvatar(<GuildMember>interaction.member)
     const embed = new MessageEmbed()
       .setTitle(interaction.options.getString('title', true))
       .setDescription(choices.join('\n'))

@@ -1,8 +1,9 @@
-import { RecurrenceRule, scheduleJob } from 'node-schedule'
-import { client } from '../index'
-import * as constant from '../constant'
-import { getTextChannelOrNull } from '../lib/discordBotUtils'
 import { Message } from 'discord.js'
+import { RecurrenceRule, scheduleJob } from 'node-schedule'
+
+import { client } from '..'
+import { ID_CHANNEL_TASK_MANAGER } from '../constant'
+import { fetchTextChannel } from '../lib/discordUtils'
 
 const EMOJI_SET_TASK = '\uD83D\uDCCC' // Pushpin
 const EMOJI_UNSET_TASK = '\uD83D\uDC4D' // Thumbs Up
@@ -21,54 +22,49 @@ const unsetTask = async (message: Message) => {
 }
 
 client.on('messageCreate', async (message: Message) => {
-  if (message.channelId !== constant.channelTaskManager || message.author.bot) {
-    return
-  }
+  if (message.author.bot) return
+  if (message.channelId !== ID_CHANNEL_TASK_MANAGER) return
+
   if (message.content.startsWith('。')) {
     await setTask(message)
   }
 })
 
 client.on('messageReactionAdd', async (reaction, user) => {
-  const fixedReaction = reaction.partial ? await reaction.fetch() : reaction
-  const fixedUser = user.partial ? await user.fetch() : user
-  const fixedMessage = fixedReaction.message.partial
-    ? await fixedReaction.message.fetch()
-    : fixedReaction.message
-  const emoji = fixedReaction.emoji.toString()
+  if (user.bot) return
 
-  if (
-    fixedMessage.channel.id !== constant.channelTaskManager ||
-    fixedMessage.author.id !== fixedUser.id ||
-    ![EMOJI_SET_TASK, EMOJI_UNSET_TASK].includes(emoji)
-  ) {
-    return
-  }
+  const message = reaction.message
+  /* resolve partials */
+  const _reaction = reaction.partial ? await reaction.fetch() : reaction
+  const _user = user.partial ? await user.fetch() : user
+  const _message = message.partial ? await message.fetch() : message
 
-  if (emoji === EMOJI_SET_TASK) {
-    await setTask(fixedMessage)
-  } else if (emoji === EMOJI_UNSET_TASK) {
-    await unsetTask(fixedMessage)
-  }
+  if (_message.channel.id !== ID_CHANNEL_TASK_MANAGER) return
+  if (_message.author.id !== _user.id) return
+
+  const emoji = _reaction.emoji.toString()
+  if (emoji === EMOJI_SET_TASK) await setTask(_message)
+  if (emoji === EMOJI_UNSET_TASK) await unsetTask(_message)
 })
+
+////////////////////////////////////////////////////////////////////////////////
 
 const schedule = new RecurrenceRule()
 schedule.hour = 9 // it means 18:00 in JST
 schedule.minute = 0
 
 scheduleJob(schedule, async () => {
-  const channel = getTextChannelOrNull(constant.channelTaskManager)
-  const tasks = await channel?.messages.fetchPinned()
+  const channel = await fetchTextChannel(ID_CHANNEL_TASK_MANAGER)
+  const tasks = await channel.messages.fetchPinned()
   if (!tasks || tasks.size === 0) return
 
-  const taskAuthorMentions = Array.from(
-    new Set(tasks.map((task) => task.author.toString()))
-  )
-
-  const taskReminderMessage =
+  const taskAuthorMentions = [
+    ...new Set(tasks.map(({ author }) => author.toString()))
+  ]
+  const reminder =
     taskAuthorMentions.join(' ') +
     '\n未完了のタスクがあります！' +
     '\n未完了のタスクはピン留めされています！'
 
-  await channel?.send(taskReminderMessage)
+  await channel.send(reminder)
 })

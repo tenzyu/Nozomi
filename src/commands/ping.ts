@@ -10,7 +10,7 @@ export default {
   async execute(interaction: CommandInteraction) {
     const latency = Math.round(client.ws.ping)
     await interaction.reply({
-      content: `${latency}ms`,
+      content: `Pong! latency: ${latency}ms`,
       ephemeral: true
     })
   }

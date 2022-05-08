@@ -1,5 +1,5 @@
-import { discordBotToken, mainGuildId } from './constant'
-import { MyBot } from './lib/discordBot'
+import { TOKEN_BOT_DISCORD, ID_GUILD_MAIN } from './constant'
+import { MyBot } from './lib/discord'
 
 const nozomi = new MyBot({
   intents: 32767,
@@ -8,8 +8,8 @@ const nozomi = new MyBot({
 
 ;(async () => {
   await nozomi.loadCogs()
-  await nozomi.loadCommand(mainGuildId)
-  await nozomi.login(discordBotToken)
+  await nozomi.loadCommand(ID_GUILD_MAIN)
+  await nozomi.login(TOKEN_BOT_DISCORD)
 })().catch(console.error)
 
 export const client = nozomi

@@ -1,55 +1,47 @@
-import { client } from '../index'
-import { mainGuildId, channelAssignList } from '../constant'
-import {
-  Collection,
-  Message,
-  MessageEmbed,
-  Role,
-  TextChannel
-} from 'discord.js'
-import { fetchTextChannel, getTextChannelOrNull } from '../lib/discordBotUtils'
+import type { Collection, Message, Role, TextChannel } from 'discord.js'
+import { MessageEmbed } from 'discord.js'
+
+import { client } from '..'
+import { ID_CHANNEL_ASSIGN_LIST, ID_GUILD_MAIN } from '../constant'
+import { fetchTextChannel } from '../lib/discordUtils'
 
 const embedName = 'Assign List'
 
-const newAssignList = (roles: Collection<string, Role>): string => {
-  const assignList = roles
-    .filter((role) => role.name.endsWith('班') || role.name === '進捗警察')
-    .map((role) => `${role.toString()}\n${role.members.map(String).join('\n')}`)
-    .join('\n\n')
-  return assignList
+const createAssignList = (roles: Collection<string, Role>): string => {
+  const targetRoles = roles.filter(
+    ({ managed, name }) => !(managed || name.includes('everyone'))
+  )
+  const membersList = targetRoles.map(
+    (role) => `${role}\n${role.members.map(String).join('\n')}`
+  )
+
+  return membersList.join('\n\n')
 }
 
 const createAssignListEmbed = (assignList: string): MessageEmbed => {
-  const embed = new MessageEmbed({
-    color: 0xff4596,
-    title: embedName,
-    description: assignList,
-    author: {
-      name: '希'
-    },
-    timestamp: new Date(),
-    footer: {
-      text: 'きゃ～'
-    }
-  })
+  const embed = new MessageEmbed()
+    .setColor(0xff4596)
+    .setTitle(embedName)
+    .setDescription(assignList)
+    .setAuthor({ name: '希' })
+    .setFooter({ text: 'きゃ～' })
+    .setTimestamp(new Date())
+
   const url = client.user?.avatarURL()
-  if (typeof url === 'string') {
-    embed.setThumbnail(url)
-  }
+  if (typeof url === 'string') embed.setThumbnail(url)
+
   return embed
 }
 
-const findAssignListMessage = async (
-  channel?: TextChannel
+const fetchAssignListMessage = async (
+  channel: TextChannel
 ): Promise<Message | null> => {
-  const messages = await channel?.messages.fetch()
-  return (
-    messages?.find(
-      (message) =>
-        message.author === client.user &&
-        message.embeds.some((embed) => embed.title === embedName)
-    ) ?? null
-  )
+  const messages = await channel.messages.fetch()
+  const isAssignListMessage = (message: Message) =>
+    message.author === client.user &&
+    message.embeds.some((embed) => embed.title === embedName)
+
+  return messages.find(isAssignListMessage) ?? null
 }
 
 const updateAssignListEmbed = async (
@@ -57,36 +49,34 @@ const updateAssignListEmbed = async (
   message: Message | null
 ) => {
   if (message === null) {
-    await getTextChannelOrNull(channelAssignList)?.send({ embeds: [embed] })
+    const channel = await fetchTextChannel(ID_CHANNEL_ASSIGN_LIST)
+    await channel.send({ embeds: [embed] })
     return
   }
+
   await message.edit({ embeds: [embed] })
 }
 
 const sendAssignListEmbed = async () => {
-  const targetGuild = client.guilds.resolve(mainGuildId)
+  const targetGuild = client.guilds.resolve(ID_GUILD_MAIN)
   const roles = await targetGuild?.roles.fetch()
-  if (roles === undefined) {
-    return
-  }
-  const assignList = newAssignList(roles)
+  if (roles === undefined) return
+
+  const assignList = createAssignList(roles)
   const embed = createAssignListEmbed(assignList)
-  const message = await findAssignListMessage(
-    await fetchTextChannel(channelAssignList)
-  )
+  const channel = await fetchTextChannel(ID_CHANNEL_ASSIGN_LIST)
+  const message = await fetchAssignListMessage(channel)
+
   await updateAssignListEmbed(embed, message)
 }
 
-client.on('ready', async () => {
-  await sendAssignListEmbed()
-})
+////////////////////////////////////////////////////////////////////////////////
+
+client.on('ready', () => sendAssignListEmbed())
 
 client.on('guildMemberUpdate', async (oldMember, newMember) => {
-  if (newMember.guild.id !== mainGuildId) {
-    return
-  }
+  if (newMember.guild.id !== ID_GUILD_MAIN) return
+  if (oldMember.roles.cache.size === newMember.roles.cache.size) return
 
-  if (oldMember.roles.cache.size !== newMember.roles.cache.size) {
-    await sendAssignListEmbed()
-  }
+  await sendAssignListEmbed()
 })

@@ -1,6 +1,8 @@
 import { CommandInteraction, GuildChannel } from 'discord.js'
-import { Schedule } from '../base/schedule'
-import { getJstTime, toSnowflake } from '../utils'
+
+import { Schedule } from '../entities/schedule'
+import { toSnowflake } from '../lib/discordUtils'
+import { getJstTime } from '../utils'
 
 export default {
   data: {
