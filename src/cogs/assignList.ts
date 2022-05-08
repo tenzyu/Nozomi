@@ -9,9 +9,10 @@ const embedName = 'Assign List'
 
 const createAssignList = (roles: Collection<string, Role>): string => {
   const ignoreRoleIds = [
-    '921807626122190899',
-    '927501472046940190',
-    '950635933772947497'
+    '888738059036798986', // everyone
+    '921807626122190899', // 天珠
+    '927501472046940190', // everyone2
+    '950635933772947497' // 通知受取
   ]
   const targetRoles = roles
     .filter(({ managed, id }) => !(managed || ignoreRoleIds.includes(id)))
