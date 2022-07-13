@@ -43,7 +43,7 @@ scheduleJob(schedule, async () => {
   const nowSnowflake = toSnowflake(getJstTime())
 
   for (const [id, revise] of Object.entries(Revise.revises)) {
-    if (nowSnowflake < revise.snowflake) continue
+    if (BigInt(nowSnowflake) < BigInt(revise.snowflake)) continue
 
     const reviseChannel = await fetchTextChannel(ID_CHANNEL_REVISE)
     const quotedChannel = await fetchTextChannel(revise.channelId)
